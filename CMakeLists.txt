@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 2.6)
+project(Psh)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+include_directories(${GLIB2_INCLUDE_DIRS})
+link_directories(${GLIB2_LIBRARY_DIRS})
+add_executable(psh main.c scanner.h scanner.c syntax.h syntax.c)
+add_definitions(${GLIB2_CFLAGS_OTHER})
+target_link_libraries(psh ${GLIB2_LIBRARIES} readline)
+
