@@ -8,6 +8,7 @@ struct stmt_node {
     char *input_redir;
     char *output_redir;
     char *error_redir;
+    int input_fd, output_fd, error_fd;
 };
 
 struct pstmt_node {
@@ -15,6 +16,7 @@ struct pstmt_node {
 };
 
 gboolean sn(struct scanner *s, struct stmt_node **node);
+gboolean pstmt(struct scanner *s, struct pstmt_node **node);
 
 #endif
 

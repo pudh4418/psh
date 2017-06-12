@@ -144,6 +144,11 @@ enum token_type scanner_next_token(struct scanner *s)
         return TOK_PIPE;
     }
 
+    if (*p == '&') {
+        scanner_set_token(s, ++p, TOK_AND, NULL);
+        return TOK_AND;
+    }
+
     GString *str = g_string_new(NULL);
     while (*p != '\0') {
         if (*p == '"') {

@@ -1,6 +1,6 @@
 #include "syntax.h"
 
-gboolean redir(struct scanner *s, struct stmt_node *node, enum op_type ot)
+static gboolean redir(struct scanner *s, struct stmt_node *node, enum op_type ot)
 {
     enum token_type tt = s->type;
     if (tt == TOK_BLANK)
@@ -24,7 +24,7 @@ gboolean redir(struct scanner *s, struct stmt_node *node, enum op_type ot)
     return TRUE;
 }
 
-gboolean sp(struct scanner *s, struct stmt_node *node)
+static gboolean sp(struct scanner *s, struct stmt_node *node)
 {
     enum token_type tt;
 
@@ -49,6 +49,9 @@ gboolean sn(struct scanner *s, struct stmt_node **node)
 {
     *node = g_new0(struct stmt_node, 1);
     struct stmt_node *p = *node;
+    p->input_fd = 0;
+    p->output_fd = 1;
+    p->error_fd = 2;
     p->argv = g_ptr_array_new();
 
     if (s->type == TOK_BLANK)
@@ -62,6 +65,30 @@ gboolean sn(struct scanner *s, struct stmt_node **node)
     scanner_next_token(s);
     sp(s, p);
     g_ptr_array_add(p->argv, NULL);
+    return TRUE;
+}
+
+gboolean pstmt(struct scanner *s, struct pstmt_node **node)
+{
+    *node = g_new0(struct pstmt_node, 1);
+    struct pstmt_node *p = *node;
+    struct stmt_node *q;
+
+    p->stmts = g_ptr_array_new();
+    if (!sn(s, &q)) {
+        g_ptr_array_free(p->stmts, TRUE);
+        g_clear_pointer(node, g_free);
+        return FALSE;
+    }
+    g_ptr_array_add(p->stmts, q);
+    while (s->type == TOK_PIPE) {
+        scanner_next_token(s);
+        struct stmt_node * n1 = g_ptr_array_index(p->stmts, p->stmts->len-1);
+        n1->output_redir = (gpointer) -1;
+        sn(s, &q);
+        q->input_redir = (gpointer) -1;
+        g_ptr_array_add(p->stmts, q);
+    }
     return TRUE;
 }
 

@@ -8,10 +8,11 @@ enum token_type {
     TOK_ID,
     TOK_OP,
     TOK_PIPE,
+    TOK_AND,
     TOK_EOL
 };
 
-static char *token_name[] = {"TOK_INV", "TOK_BLANK", "TOK_ID", "TOK_OP", "TOK_PIPE", "TOK_EOL"};
+static char *token_name[] = {"TOK_INV", "TOK_BLANK", "TOK_ID", "TOK_OP", "TOK_PIPE", "TOK_AND", "TOK_EOL"};
 
 enum op_type {
     OP_LESS,
