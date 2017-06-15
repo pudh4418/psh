@@ -75,6 +75,7 @@ gboolean pstmt(struct scanner *s, struct pstmt_node **node)
     struct stmt_node *q;
 
     p->stmts = g_ptr_array_new();
+    p->back = FALSE;
     if (!sn(s, &q)) {
         g_ptr_array_free(p->stmts, TRUE);
         g_clear_pointer(node, g_free);
@@ -89,6 +90,10 @@ gboolean pstmt(struct scanner *s, struct pstmt_node **node)
         q->input_redir = (gpointer) -1;
         g_ptr_array_add(p->stmts, q);
     }
+    if (s->type == TOK_BLANK)
+        scanner_next_token(s);
+    if (s->type == TOK_AND)
+        p->back = TRUE;
     return TRUE;
 }
 

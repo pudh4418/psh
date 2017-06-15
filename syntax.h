@@ -13,6 +13,7 @@ struct stmt_node {
 
 struct pstmt_node {
     GPtrArray *stmts;
+    gboolean back;
 };
 
 gboolean sn(struct scanner *s, struct stmt_node **node);
